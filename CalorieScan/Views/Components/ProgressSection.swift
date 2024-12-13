@@ -29,7 +29,8 @@ struct ProgressSection: View {
             
             content
         }
-        .padding()
+        .padding(.vertical, Constants.Spacing.medium)
+        .padding(.horizontal, Constants.Spacing.medium)
         .background(Color.white)
         .cornerRadius(Constants.CornerRadius.medium)
     }
@@ -41,10 +42,12 @@ struct ProgressSection: View {
             title: "Sample Section",
             iconName: "star.fill"
         ) {
-            Text("Sample Content")
-                .foregroundColor(Constants.Colors.textSecondary)
+            VStack {
+                Text("Sample Content")
+                    .foregroundColor(Constants.Colors.textSecondary)
+            }
         }
     }
-    .padding()
+    .padding(.horizontal, Constants.Spacing.small)
     .background(Constants.Colors.secondaryBackground)
 }
