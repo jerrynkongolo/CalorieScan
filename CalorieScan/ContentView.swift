@@ -1,24 +1,49 @@
-//
-//  ContentView.swift
-//  CalorieScan
-//
-//  Created by Jerry Nkongolo on 13/12/2024.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var appState: AppState
+    @State private var showLaunchScreen = true
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationView {
+            ZStack {
+                if showLaunchScreen {
+                    LaunchScreenView {
+                        withAnimation {
+                            showLaunchScreen = false
+                        }
+                    }
+                } else {
+                    if appState.isAuthenticated {
+                        HomeView(appState: appState)
+                    } else {
+                        OnboardingOrAuthView()
+                            .environmentObject(appState)
+                    }
+                }
+            }
         }
-        .padding()
     }
 }
 
-#Preview {
-    ContentView()
+struct OnboardingOrAuthView: View {
+    @State private var showAuth = false
+    @EnvironmentObject var appState: AppState
+    
+    var body: some View {
+        Group {
+            if showAuth {
+                AuthView()
+                    .environmentObject(appState)
+            } else {
+                OnboardingContainerView()
+                    .environmentObject(appState)
+                    .onAppear {
+                        if !appState.isAuthenticated {
+                            showAuth = true
+                        }
+                    }
+            }
+        }
+    }
 }

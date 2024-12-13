@@ -5,13 +5,13 @@
 //  Created by Jerry Nkongolo on 13/12/2024.
 //
 
-import Testing
+import XCTest
 @testable import CalorieScan
 
-struct CalorieScanTests {
+class CalorieScanTests: XCTestCase {
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    func testExample() {
+        // Write your test here and use APIs like `XCTAssert(...)` to check expected conditions.
     }
 
 }
