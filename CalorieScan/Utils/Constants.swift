@@ -9,6 +9,29 @@ enum Constants {
         static let iconSelected = Color(.darkGray)
         static let background = Color(.systemBackground)
         static let secondaryBackground = Color(.systemGray6)
+        
+        enum Pastel {
+            static let pink = Color(red: 0.95, green: 0.8, blue: 0.9)
+            static let blue = Color(red: 0.8, green: 0.9, blue: 0.95)
+            static let green = Color(red: 0.85, green: 0.95, blue: 0.8)
+            static let yellow = Color(red: 0.95, green: 0.95, blue: 0.8)
+            static let purple = Color(red: 0.9, green: 0.8, blue: 0.95)
+            
+            static func forMeal(_ meal: Meal) -> Color {
+                switch meal.name.lowercased() {
+                case "breakfast":
+                    return yellow
+                case "lunch":
+                    return green
+                case "dinner":
+                    return blue
+                case "snack":
+                    return pink
+                default:
+                    return purple
+                }
+            }
+        }
     }
     
     enum Spacing {

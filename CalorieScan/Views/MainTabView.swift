@@ -19,10 +19,10 @@ struct MainTabView: View {
                 }
                 .tag(1)
             
-            HistoryView()
+            RewardsView()
                 .tabItem {
-                    Image(systemName: "clock.fill")
-                    Text("History")
+                    Image(systemName: "gift.fill")
+                    Text("Rewards")
                 }
                 .tag(2)
             
@@ -35,4 +35,8 @@ struct MainTabView: View {
         }
         .tint(Constants.Colors.iconSelected)
     }
+}
+
+#Preview {
+    MainTabView()
 }

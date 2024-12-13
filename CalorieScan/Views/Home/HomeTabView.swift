@@ -2,23 +2,32 @@ import SwiftUI
 
 struct HomeTabView: View {
     @StateObject private var viewModel = HomeViewModel()
+    @State private var showHistory = false
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: Constants.Spacing.large) {
-                headerSection
-                progressSection
-                mealsSection
-                recentFoodsSection
-                Spacer(minLength: 0)
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: Constants.Spacing.large) {
+                    headerSection
+                    progressSection
+                    mealsSection
+                    insightSection
+                    recentFoodsSection
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, Constants.Spacing.small)
+            }
+            .background(Constants.Colors.secondaryBackground)
+            .navigationDestination(isPresented: $showHistory) {
+                HistoryView()
             }
         }
-        .withGradientBackground()
+        .navigationViewStyle(.stack)
     }
     
     private var headerSection: some View {
         HStack {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: Constants.Spacing.small) {
                 Text("Good Evening")
                     .font(.subheadline)
                     .foregroundColor(.gray)
@@ -95,9 +104,12 @@ struct HomeTabView: View {
     }
     
     private var mealsSection: some View {
-        VStack(spacing: Constants.Spacing.medium) {
-            SectionHeader(title: "Meals Today", showSeeAll: true) {
-                // Handle see all action
+        VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
+            SectionHeader(
+                title: "Meals Today",
+                showSeeAll: true
+            ) {
+                showHistory = true
             }
             
             VStack(spacing: Constants.Spacing.small) {
@@ -106,6 +118,18 @@ struct HomeTabView: View {
                 }
             }
             .padding(.horizontal)
+        }
+    }
+    
+    private var insightSection: some View {
+        VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
+            SectionHeader(title: "AI Food Insights")
+            
+            InsightCard(
+                message: "Based on your meals today, you're doing great with protein intake! Consider adding more vegetables to your next meal for balanced nutrition.",
+                iconName: "brain.head.profile",
+                accentColor: Constants.Colors.Pastel.purple
+            )
         }
     }
     
@@ -123,4 +147,8 @@ struct HomeTabView: View {
             }
         }
     }
+}
+
+#Preview {
+    HomeTabView()
 }

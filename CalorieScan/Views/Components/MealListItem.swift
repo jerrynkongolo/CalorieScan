@@ -22,11 +22,11 @@ struct MealListItem: View {
     
     private var mealIcon: some View {
         Circle()
-            .fill(Constants.Colors.primary.opacity(0.1))
+            .fill(Constants.Colors.Pastel.forMeal(meal))
             .frame(width: Constants.Size.iconLarge, height: Constants.Size.iconLarge)
             .overlay(
                 Image(systemName: meal.icon)
-                    .foregroundColor(Constants.Colors.primary)
+                    .foregroundColor(Constants.Colors.textDark)
                     .font(.title2)
             )
     }

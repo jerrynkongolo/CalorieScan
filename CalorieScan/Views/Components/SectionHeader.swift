@@ -3,22 +3,24 @@ import SwiftUI
 struct SectionHeader: View {
     let title: String
     var showSeeAll: Bool = false
-    var seeAllAction: (() -> Void)? = nil
+    var onSeeAllTapped: (() -> Void)?
     
     var body: some View {
         HStack {
             Text(title)
                 .font(.title3)
-                .fontWeight(.bold)
+                .fontWeight(.semibold)
+                .foregroundColor(Constants.Colors.textPrimary)
             
             Spacer()
             
             if showSeeAll {
-                Button(action: { seeAllAction?() }) {
+                Button {
+                    onSeeAllTapped?()
+                } label: {
                     Text("See All")
                         .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.purple)
+                        .foregroundColor(Constants.Colors.primary)
                 }
             }
         }
@@ -28,9 +30,10 @@ struct SectionHeader: View {
 
 #Preview {
     VStack(spacing: 20) {
-        SectionHeader(title: "Section Title")
+        SectionHeader(title: "Sample Section")
         SectionHeader(title: "With See All", showSeeAll: true) {
             print("See all tapped")
         }
     }
+    .padding()
 }
