@@ -33,6 +33,6 @@ struct MainTabView: View {
                 }
                 .tag(3)
         }
-        .accentColor(.purple)
+        .tint(Constants.Colors.iconSelected)
     }
 }
