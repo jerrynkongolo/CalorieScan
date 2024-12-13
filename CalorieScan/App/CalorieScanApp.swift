@@ -7,6 +7,7 @@
 
 import SwiftUI
 import os.log
+import FirebaseCore
 
 @main
 struct CalorieScanApp: App {
@@ -14,6 +15,9 @@ struct CalorieScanApp: App {
     private let logger = Logger(subsystem: "com.jerrynkongolo.CalorieScan", category: "AppLaunch")
     
     init() {
+        // Configure Firebase first
+        FirebaseApp.configure()
+        
         // Configure app launch performance tracking
         if #available(iOS 15.0, *) {
             configureAppAsync()
@@ -46,6 +50,7 @@ struct CalorieScanApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(appState)
+                .preferredColorScheme(.light) // Force light mode
                 // Optimize Core Animation performance
                 .transaction { transaction in
                     transaction.disablesAnimations = true

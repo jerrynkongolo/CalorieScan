@@ -87,13 +87,15 @@ struct LoginView: View {
                             RoundedRectangle(cornerRadius: 25)
                                 .fill(Color.purple)
                             
-                            if viewModel.isLoading {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            } else {
-                                Text("Sign In")
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                            Group {
+                                if viewModel.isLoading {
+                                    ProgressView()
+                                        .tint(.white)
+                                } else {
+                                    Text("Sign In")
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                }
                             }
                         }
                     }

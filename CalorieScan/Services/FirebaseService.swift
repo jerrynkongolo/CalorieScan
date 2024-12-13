@@ -39,14 +39,10 @@ actor FirebaseService {
     
     private init() {}
     
-    func configure() {
+    func configure() async {
         guard !isConfigured else { return }
-        
-        if FirebaseApp.app() == nil {
-            FirebaseApp.configure()
-            isConfigured = true
-            logger.info("Firebase configured successfully")
-        }
+        isConfigured = true
+        logger.info("Firebase service initialized")
     }
     
     private func isAllowedDomain(_ email: String) -> Bool {
@@ -64,9 +60,28 @@ actor FirebaseService {
         return !methods.isEmpty
     }
     
+    // MARK: - User Management
+    
+    private func createUserDocument(_ user: UserModel) async throws {
+        try await db.collection("users").document(user.id).setData(user.toFirestore)
+        logger.info("Created user document for: \(user.email)")
+    }
+    
+    private func updateUserLastLogin(_ userId: String) async throws {
+        try await db.collection("users").document(userId).updateData([
+            "lastLoginAt": Timestamp(date: Date())
+        ])
+        logger.info("Updated last login for user: \(userId)")
+    }
+    
+    func getCurrentUser() -> UserModel? {
+        guard let firebaseUser = Auth.auth().currentUser else { return nil }
+        return UserModel(id: firebaseUser.uid, email: firebaseUser.email ?? "")
+    }
+    
     func signIn(email: String, password: String) async throws {
         guard isConfigured else {
-            logger.error("Attempting to sign in before Firebase configuration")
+            logger.error("Attempted to sign in before Firebase was configured")
             throw AuthError.configurationError
         }
         
@@ -74,13 +89,19 @@ actor FirebaseService {
             throw AuthError.invalidDomain
         }
         
-        try await Auth.auth().signIn(withEmail: email, password: password)
-        logger.info("User signed in successfully: \(email)")
+        do {
+            let result = try await Auth.auth().signIn(withEmail: email, password: password)
+            try await updateUserLastLogin(result.user.uid)
+            logger.info("User signed in successfully: \(email)")
+        } catch {
+            logger.error("Sign in failed: \(error.localizedDescription)")
+            throw error
+        }
     }
     
     func signUp(email: String, password: String) async throws {
         guard isConfigured else {
-            logger.error("Attempting to sign up before Firebase configuration")
+            logger.error("Attempted to sign up before Firebase was configured")
             throw AuthError.configurationError
         }
         
@@ -92,8 +113,23 @@ actor FirebaseService {
             throw AuthError.emailAlreadyExists
         }
         
-        try await Auth.auth().createUser(withEmail: email, password: password)
-        logger.info("New user created successfully: \(email)")
+        do {
+            let result = try await Auth.auth().createUser(withEmail: email, password: password)
+            let newUser = UserModel(id: result.user.uid, email: email)
+            try await createUserDocument(newUser)
+            logger.info("New user created successfully: \(email)")
+        } catch let error as NSError {
+            logger.error("Sign up failed: \(error.localizedDescription)")
+            
+            switch error.code {
+            case AuthErrorCode.emailAlreadyInUse.rawValue:
+                throw AuthError.emailAlreadyExists
+            case AuthErrorCode.invalidEmail.rawValue:
+                throw AuthError.invalidEmail(error.localizedDescription)
+            default:
+                throw error
+            }
+        }
     }
     
     func resetPassword(email: String) async throws {

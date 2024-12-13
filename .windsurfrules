@@ -42,4 +42,23 @@ Do not modify, remove, or overwrite any code that is outside the defined scope.\
 - For UI work, focus on the visual and layout elements only.  \
 - For back-end work, focus only on logic, models, APIs, and data handling.  \
 \
+
+	•	Scope Confirmation:
+Before making any changes, restate the instructions in your own words to ensure you fully understand the required scope. If any ambiguity remains, request clarification.
+	•	No Silent Alterations:
+If you encounter a piece of code that seems incorrect or inefficient but is outside of the specified scope, do not modify it. Instead, note it down and wait for explicit instructions to address it.
+	•	Preserve Naming and Structure:
+Do not rename files, classes, methods, or variables not explicitly mentioned in the instructions. Maintain the existing project structure and organization.
+	•	No Configuration Changes:
+Do not alter configuration files, build settings, deployment scripts, or environment variables unless explicitly instructed. All work should be contained within the directories and files specified.
+	•	Follow Coding Standards:
+If there is a style guide or coding standard referenced (e.g., .gpt-instructions for UI style or architecture.md for back-end structure), adhere strictly to it. Do not introduce new patterns or styles not mentioned in the instructions.
+	•	Testing and Verification:
+After completing the requested changes, verify that your modifications do not break existing functionality outside the allowed scope. Perform a light check (e.g., compile and run the code if applicable) to ensure no unintended side effects have occurred.
+	•	Documentation Clarity:
+If you add or modify code that could be confusing, add comments or documentation only within the allowed scope. Do not alter documentation for code outside of the specified directories.
+	•	No Unauthorized Integrations:
+Do not introduce new libraries, frameworks, or external dependencies unless explicitly instructed to do so.
+
+By following these original and additional rules, the AI coder can maintain strict adherence to the defined boundaries of each task and avoid undesired modifications.
 Refer to this file at the start of each task and follow it precisely.}

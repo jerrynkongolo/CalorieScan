@@ -16,7 +16,9 @@ class AuthViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var isAuthenticated: Bool = false
     
-    private var cancellables = Set<AnyCancellable>()
+    init() {
+        // Remove the auth state listener from here since it's now in ContentView
+    }
     
     func login() {
         guard isValidEmail(email), isValidPassword(password) else {
@@ -28,7 +30,6 @@ class AuthViewModel: ObservableObject {
             isLoading = true
             do {
                 try await FirebaseService.shared.signIn(email: email, password: password)
-                isAuthenticated = true
                 errorMessage = nil
             } catch let error as AuthError {
                 errorMessage = error.localizedDescription
@@ -49,7 +50,6 @@ class AuthViewModel: ObservableObject {
             isLoading = true
             do {
                 try await FirebaseService.shared.signUp(email: email, password: password)
-                isAuthenticated = true
                 errorMessage = nil
             } catch let error as AuthError {
                 errorMessage = error.localizedDescription
