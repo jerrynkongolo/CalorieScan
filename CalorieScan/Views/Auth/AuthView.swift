@@ -10,27 +10,13 @@ import SwiftUI
 public struct AuthView: View {
     @StateObject var viewModel = AuthViewModel()
     @EnvironmentObject var appState: AppState
-    @State private var selectedSegment = 0
     
     public var body: some View {
-        VStack {
-            Picker("", selection: $selectedSegment) {
-                Text("Login").tag(0)
-                Text("Sign Up").tag(1)
+        LoginView(viewModel: viewModel)
+            .onChange(of: viewModel.isAuthenticated) { newValue in
+                if newValue {
+                    appState.isAuthenticated = true
+                }
             }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding()
-
-            if selectedSegment == 0 {
-                LoginView(viewModel: viewModel)
-            } else {
-                SignUpView(viewModel: viewModel)
-            }
-        }
-        .onChange(of: viewModel.isAuthenticated) { newValue in
-            if newValue {
-                appState.isAuthenticated = true
-            }
-        }
     }
 }

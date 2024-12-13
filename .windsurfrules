@@ -1,0 +1,45 @@
+## General Rule\
+You must only work on the part of the project (UI or back-end) specified in the instructions.  \
+Do not modify, remove, or overwrite any code that is outside the defined scope.\
+\
+---\
+\
+## UI Development Rules\
+- Only modify files or components in the `Views`, `Layouts`, or `Components` directories.  \
+- Do not touch files related to business logic, APIs, models, or data handling.  \
+- Avoid making changes to files in directories like `Models`, `Services`, `Controllers`, or `API`.  \
+\
+- Do not modify:\
+  - Functions, services, or back-end-specific logic.\
+  - Any `@State`, `@ObservedObject`, or `@EnvironmentObject` properties unless explicitly told to.\
+\
+- For all UI-related tasks, follow the rules in `.gpt-instructions` for layout, style, and design.  \
+\
+---\
+\
+## Back-End Development Rules\
+- Only modify files or components in the `Models`, `Services`, `Controllers`, or `API` directories.  \
+- Do not touch files related to UI, views, layouts, or styling.  \
+\
+- Avoid making changes to:\
+  - Any files in `Views`, `Layouts`, or `Components`.  \
+  - Design elements like colors, spacing, or layout constraints.  \
+  - Any `@State`, `@ObservedObject`, or `@EnvironmentObject` properties.  \
+\
+- For all back-end-related tasks, refer to `architecture.md` or other back-end documentation for guidance.\
+\
+---\
+\
+## Task-Specific Instructions\
+- **Before Starting a Task**: Confirm if the task involves working on UI, back-end, or both. If it\'92s unclear, do not proceed until clarification is provided.  \
+- **During the Task**: Only implement the functionality or design described in the instructions.  \
+- **After Completing the Task**: Ensure that no unrelated files or components were modified.  \
+\
+---\
+\
+## Additional Notes\
+- Do not assume changes are needed outside the specified scope unless explicitly told to.  \
+- For UI work, focus on the visual and layout elements only.  \
+- For back-end work, focus only on logic, models, APIs, and data handling.  \
+\
+Refer to this file at the start of each task and follow it precisely.}
