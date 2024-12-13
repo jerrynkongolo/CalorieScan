@@ -2,20 +2,58 @@ import SwiftUI
 
 struct HomeTabView: View {
     @StateObject private var viewModel = HomeViewModel()
+    @StateObject private var profileService = UserProfileService()
     @State private var showHistory = false
+    @State private var showingProfileSetup = false
     
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: Constants.Spacing.large) {
-                    headerSection
-                    progressSection
-                    mealsSection
-                    insightSection
-                    recentFoodsSection
-                    Spacer(minLength: 0)
+                if !profileService.isProfileComplete {
+                    // Profile Setup Card
+                    VStack(spacing: Constants.Spacing.medium) {
+                        Image(systemName: "person.crop.circle.badge.plus")
+                            .font(.system(size: 60))
+                            .foregroundColor(Constants.Colors.primary)
+                        
+                        Text("Welcome to CalorieScan!")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Constants.Colors.textPrimary)
+                        
+                        Text("Let's set up your profile to get started with your health journey.")
+                            .font(.body)
+                            .foregroundColor(Constants.Colors.textSecondary)
+                            .multilineTextAlignment(.center)
+                        
+                        Button {
+                            showingProfileSetup = true
+                        } label: {
+                            Text("Set Up Profile")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Constants.Colors.primary)
+                                .cornerRadius(Constants.CornerRadius.medium)
+                        }
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(Constants.CornerRadius.medium)
+                    .shadow(radius: 2)
+                    .padding()
+                } else {
+                    VStack(spacing: Constants.Spacing.large) {
+                        headerSection
+                        progressSection
+                        mealsSection
+                        insightSection
+                        recentFoodsSection
+                        Spacer(minLength: 0)
+                    }
+                    .padding(.horizontal, Constants.Spacing.small)
                 }
-                .padding(.horizontal, Constants.Spacing.small)
             }
             .background(Constants.Colors.secondaryBackground)
             .navigationDestination(isPresented: $showHistory) {
@@ -23,6 +61,9 @@ struct HomeTabView: View {
             }
         }
         .navigationViewStyle(.stack)
+        .sheet(isPresented: $showingProfileSetup) {
+            ProfileSetupView(profileService: profileService)
+        }
     }
     
     private var headerSection: some View {
@@ -31,7 +72,7 @@ struct HomeTabView: View {
                 Text("Good Evening")
                     .font(.subheadline)
                     .foregroundColor(.gray)
-                Text("Jerry")
+                Text(profileService.currentProfile?.name ?? "User")
                     .font(.title)
                     .fontWeight(.bold)
             }
@@ -64,16 +105,45 @@ struct HomeTabView: View {
                             .frame(height: 20)
                         
                         RoundedRectangle(cornerRadius: Constants.CornerRadius.small)
-                            .fill(Color.purple)
+                            .fill(Constants.Colors.primary)
                             .frame(width: geometry.size.width * viewModel.calculateProgress(), height: 20)
                     }
                 }
                 .frame(height: 20)
                 .padding(.horizontal)
                 
-                caloriesInfo
+                if let profile = profileService.currentProfile {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Daily Target")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                            Text("\(Int(profile.dailyCalorieTarget))")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(Color(.darkGray))
+                        }
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .trailing) {
+                            Text("Remaining")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                            Text("\(viewModel.remainingCalories)") // Will be updated with meal tracking
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(Color(.darkGray))
+                        }
+                    }
                     .padding(.horizontal)
                     .padding(.bottom, Constants.Spacing.small)
+                    .onAppear {
+                        if let target = profileService.currentProfile?.dailyCalorieTarget {
+                            viewModel.updateCalories(target: target)
+                        }
+                    }
+                }
             }
         }
         .padding(.horizontal)

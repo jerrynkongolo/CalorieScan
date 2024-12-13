@@ -116,7 +116,7 @@ struct ProgressView: View {
             Spacer()
             Text(value)
                 .font(isTotal ? .headline : .subheadline)
-                .foregroundColor(isTotal ? Constants.Colors.primary : Constants.Colors.textPrimary)
+                .foregroundColor(isTotal ? Constants.Colors.primary : Color(.darkGray))
         }
     }
     
