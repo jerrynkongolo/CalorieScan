@@ -6,13 +6,13 @@
 //
 
 import SwiftUI
-import FirebaseAuth
 
 struct HomeView: View {
-    let appState: AppState
-    
     var body: some View {
         MainTabView()
-            .environmentObject(appState)
     }
+}
+
+#Preview {
+    HomeView()
 }

@@ -4,27 +4,59 @@ struct ProgressView: View {
     @StateObject private var profileService = UserProfileService()
     
     var body: some View {
-        ScrollableView(title: "Progress", horizontalPadding: Constants.Spacing.small) {
+        ScrollableView(title: "Progress") {
             if let profile = profileService.currentProfile {
                 VStack(spacing: Constants.Spacing.large) {
                     // Profile Summary
                     ProgressSection(title: "Profile Summary", iconName: "person.circle.fill") {
                         VStack(spacing: Constants.Spacing.medium) {
                             HStack {
-                                statItem(title: "Weight", value: String(format: "%.1f kg", profile.weight), icon: "scalemass.fill")
+                                statItem(title: "Current", value: String(format: "%.1f kg", profile.weight), icon: "scalemass.fill")
                                 Spacer()
-                                statItem(title: "Height", value: String(format: "%.1f cm", profile.height), icon: "ruler.fill")
+                                statItem(title: "Target", value: String(format: "%.1f kg", profile.targetWeight), icon: "target")
                                 Spacer()
                                 statItem(title: "BMI", value: String(format: "%.1f", profile.bmi), icon: "chart.bar.fill")
                             }
                             
                             HStack {
-                                statItem(title: "Age", value: "\(profile.age)", icon: "calendar")
+                                statItem(title: "Height", value: String(format: "%.1f cm", profile.height), icon: "ruler.fill")
                                 Spacer()
                                 statItem(title: "Activity", value: profile.workoutFrequency.rawValue, icon: "figure.run")
                                 Spacer()
-                                statItem(title: "Goal", value: profile.weightGoal.rawValue, icon: "target")
+                                let daysLeft = Calendar.current.dateComponents([.day], from: Date(), to: profile.targetDate).day ?? 0
+                                statItem(title: "Days Left", value: "\(daysLeft)", icon: "calendar")
                             }
+                        }
+                    }
+                    
+                    // Weight Goal Progress
+                    ProgressSection(title: "Weight Goal Progress", iconName: "chart.line.uptrend.xyaxis") {
+                        VStack(spacing: Constants.Spacing.medium) {
+                            let weightDiff = profile.targetWeight - profile.weight
+                            let totalDays = Calendar.current.dateComponents([.day], from: Date(), to: profile.targetDate).day ?? 90
+                            let weeklyChange = (weightDiff / Double(totalDays)) * 7.0
+                            
+                            HStack {
+                                VStack(alignment: .leading, spacing: Constants.Spacing.small) {
+                                    Text("Weekly Change")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    Text(String(format: "%.1f kg/week", abs(weeklyChange)))
+                                        .font(.headline)
+                                        .foregroundColor(weeklyChange < 0 ? .red : .green)
+                                }
+                                Spacer()
+                                VStack(alignment: .trailing, spacing: Constants.Spacing.small) {
+                                    Text("Target Date")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    Text(profile.targetDate, style: .date)
+                                        .font(.headline)
+                                }
+                            }
+                            
+                            ProgressBar(value: min(1.0, max(0.0, abs(profile.weight - profile.targetWeight) / abs(weightDiff))))
+                                .frame(height: 8)
                         }
                     }
                     
@@ -32,56 +64,58 @@ struct ProgressView: View {
                     ProgressSection(title: "Daily Energy Plan", iconName: "bolt.circle.fill") {
                         VStack(alignment: .leading, spacing: Constants.Spacing.small) {
                             energyRow(title: "Base Metabolic Rate", value: String(format: "%.0f kcal", profile.bmr), icon: "flame.fill")
+                            
+                            let activityCalories = profile.bmr * (profile.workoutFrequency.activityMultiplier - 1)
                             energyRow(
                                 title: "Activity Calories",
-                                value: String(format: "+%.0f kcal", profile.bmr * (profile.workoutFrequency.activityMultiplier - 1)),
+                                value: String(format: "+%.0f kcal", activityCalories),
                                 icon: "figure.walk"
                             )
+                            
+                            // Calculate daily calorie adjustment based on weight goal
+                            let weightDiff = profile.targetWeight - profile.weight
+                            let totalDays = max(1.0, Double(Calendar.current.dateComponents([.day], from: Date(), to: profile.targetDate).day ?? 90))
+                            let dailyWeightChange = weightDiff / totalDays
+                            // 1 kg of weight change requires approximately 7700 calories
+                            let goalAdjustment = dailyWeightChange * 7700
+                            
                             energyRow(
                                 title: "Goal Adjustment",
-                                value: String(format: "%.0f kcal", profile.weightGoal.calorieAdjustment),
-                                icon: "arrow.up.and.down"
+                                value: String(format: "%+.0f kcal", goalAdjustment),
+                                icon: "arrow.up.arrow.down"
                             )
                             
                             Divider()
+                                .padding(.vertical, Constants.Spacing.small)
                             
+                            let totalDailyCalories = profile.bmr + activityCalories + goalAdjustment
                             energyRow(
                                 title: "Daily Target",
-                                value: String(format: "%.0f kcal", profile.dailyCalorieTarget),
-                                isTotal: true,
+                                value: String(format: "%.0f kcal", max(1200, totalDailyCalories)), // Minimum 1200 calories for safety
                                 icon: "star.fill"
                             )
                         }
+                        .padding()
+                        .background(Color(.systemBackground))
+                        .cornerRadius(Constants.CornerRadius.medium)
                     }
                     
                     // Food Target
                     ProgressSection(title: "Food Target", iconName: "fork.knife.circle.fill") {
                         VStack(spacing: Constants.Spacing.medium) {
                             // Calculate macros based on daily calorie target
-                            let proteinGrams = profile.dailyCalorieTarget * 0.3 / 4 // 30% of calories from protein
-                            let carbsGrams = profile.dailyCalorieTarget * 0.45 / 4  // 45% of calories from carbs
-                            let fatGrams = profile.dailyCalorieTarget * 0.25 / 9    // 25% of calories from fat
+                            let proteinGrams = Double(profile.dailyCalorieTarget) * 0.3 / 4 // 30% of calories from protein
+                            let carbsGrams = Double(profile.dailyCalorieTarget) * 0.45 / 4  // 45% of calories from carbs
+                            let fatGrams = Double(profile.dailyCalorieTarget) * 0.25 / 9    // 25% of calories from fat
                             
                             macroRow(title: "Protein", value: "\(Int(proteinGrams))g", subtitle: "30% of daily calories", icon: "circle.grid.cross.fill")
                             Divider()
                             macroRow(title: "Carbs", value: "\(Int(carbsGrams))g", subtitle: "45% of daily calories", icon: "circle.grid.2x2.fill")
                             Divider()
-                            macroRow(title: "Fat", value: "\(Int(fatGrams))g", subtitle: "25% of daily calories", icon: "circle.fill")
-                        }
-                    }
-                    
-                    // Active Target
-                    ProgressSection(title: "Active Target", iconName: "flame.circle.fill") {
-                        VStack(spacing: Constants.Spacing.medium) {
-                            targetRow(title: "Daily Steps", value: "10,000 steps", icon: "figure.walk")
-                            Divider()
-                            targetRow(title: "Active Minutes", value: "30 mins", icon: "timer")
-                            Divider()
-                            targetRow(title: "Active Calories", value: "300 kcal", icon: "flame")
+                            macroRow(title: "Fat", value: "\(Int(fatGrams))g", subtitle: "25% of daily calories", icon: "circle.grid.3x3.fill")
                         }
                     }
                 }
-                .padding(.horizontal, Constants.Spacing.small)
             } else {
                 // Show loading or placeholder state
                 ProgressView()
@@ -91,32 +125,38 @@ struct ProgressView: View {
     
     private func statItem(title: String, value: String, icon: String) -> some View {
         VStack(spacing: Constants.Spacing.small) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(.accentColor)
+            
             Text(title)
-                .font(.subheadline)
-                .foregroundColor(Constants.Colors.textSecondary)
-            HStack(spacing: Constants.Spacing.small) {
-                Image(systemName: icon)
-                    .foregroundColor(.gray)
-                Text(value)
-                    .font(.headline)
-                    .foregroundColor(Constants.Colors.textPrimary)
-            }
+                .font(.caption)
+                .foregroundColor(.secondary)
+            
+            Text(value)
+                .font(.callout)
+                .fontWeight(.medium)
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, Constants.Spacing.small)
+        .background(Color(.systemBackground))
+        .cornerRadius(Constants.CornerRadius.medium)
     }
     
-    private func energyRow(title: String, value: String, isTotal: Bool = false, icon: String) -> some View {
+    private func energyRow(title: String, value: String, icon: String, isTotal: Bool = false) -> some View {
         HStack {
-            HStack(spacing: Constants.Spacing.small) {
-                Image(systemName: icon)
-                    .foregroundColor(isTotal ? .orange : .gray)
-                Text(title)
-                    .font(isTotal ? .headline : .subheadline)
-                    .foregroundColor(isTotal ? Constants.Colors.textPrimary : Constants.Colors.textSecondary)
-            }
+            Image(systemName: icon)
+                .frame(width: 24)
+                .foregroundColor(isTotal ? .accentColor : .secondary)
+            
+            Text(title)
+                .font(isTotal ? .headline : .body)
+            
             Spacer()
+            
             Text(value)
-                .font(isTotal ? .headline : .subheadline)
-                .foregroundColor(isTotal ? Constants.Colors.primary : Color(.darkGray))
+                .font(isTotal ? .headline : .body)
+                .fontWeight(isTotal ? .bold : .regular)
         }
     }
     
@@ -139,20 +179,22 @@ struct ProgressView: View {
                 .foregroundColor(Constants.Colors.primary)
         }
     }
+}
+
+struct ProgressBar: View {
+    var value: Double
     
-    private func targetRow(title: String, value: String, icon: String) -> some View {
-        HStack {
-            HStack(spacing: Constants.Spacing.small) {
-                Image(systemName: icon)
-                    .foregroundColor(title == "Daily Steps" ? .blue : 
-                                   title == "Active Minutes" ? .green : .orange)
-                Text(title)
-                    .font(.headline)
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .foregroundColor(.secondary.opacity(0.3))
+                
+                Rectangle()
+                    .foregroundColor(.accentColor)
+                    .frame(width: geometry.size.width * value)
             }
-            Spacer()
-            Text(value)
-                .font(.headline)
-                .foregroundColor(Constants.Colors.primary)
+            .cornerRadius(4)
         }
     }
 }

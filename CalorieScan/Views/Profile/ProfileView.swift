@@ -1,113 +1,103 @@
 import SwiftUI
-import FirebaseAuth
 
 struct ProfileView: View {
-    @EnvironmentObject var appState: AppState
-    @State private var showingSignOutAlert = false
+    @StateObject private var userDataService = UserDataService.shared
+    @State private var showingResetAlert = false
     
     var body: some View {
-        ScrollableView(title: "Profile") {
-            VStack(spacing: Constants.Spacing.large) {
-                // Header
-                if let user = Auth.auth().currentUser {
-                    ProfileHeader(
-                        name: user.displayName ?? "User",
-                        email: user.email ?? "",
-                        imageURL: user.photoURL
-                    )
-                }
-                
-                // Account Settings
-                VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
-                    SectionHeader(title: "Account Settings")
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: Constants.Spacing.large) {
+                    // Header
+                    if let profile = userDataService.currentProfile {
+                        ProfileHeader(
+                            name: profile.name,
+                            imageURL: nil
+                        )
+                    } else {
+                        ProfileHeader(
+                            name: "Guest User",
+                            imageURL: nil
+                        )
+                    }
                     
-                    VStack(spacing: 0) {
-                        ProfileMenuRow(
-                            icon: "person.fill",
-                            title: "Personal Information",
-                            subtitle: "Update your profile details",
-                            action: {}
-                        )
+                    // Account Settings
+                    VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
+                        SectionHeader(title: "Account Settings")
                         
-                        ProfileMenuRow(
-                            icon: "target",
-                            title: "Goals & Targets",
-                            subtitle: "Set your health and fitness goals",
-                            action: {}
-                        )
-                        
-                        ProfileMenuRow(
-                            icon: "bell.fill",
-                            title: "Notifications",
-                            subtitle: "Manage your notifications",
-                            action: {}
-                        )
+                        VStack(spacing: 0) {
+                            ProfileMenuRow(
+                                icon: "person.fill",
+                                title: "Personal Information",
+                                subtitle: "Update your profile details",
+                                action: {}
+                            )
+                            
+                            ProfileMenuRow(
+                                icon: "target",
+                                title: "Goals & Targets",
+                                subtitle: "Set your health and fitness goals",
+                                action: {}
+                            )
+                            
+                            ProfileMenuRow(
+                                icon: "bell.fill",
+                                title: "Notifications",
+                                subtitle: "Manage your notifications",
+                                action: {}
+                            )
+                        }
+                        .background(Color.white)
+                        .cornerRadius(Constants.CornerRadius.medium)
                     }
-                    .background(Color.white)
-                    .cornerRadius(Constants.CornerRadius.medium)
-                }
-                
-                // App Settings
-                VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
-                    SectionHeader(title: "App Settings")
                     
-                    VStack(spacing: 0) {
-                        ProfileMenuRow(
-                            icon: "gear",
-                            title: "Preferences",
-                            subtitle: "Units, language, theme",
-                            action: {}
-                        )
+                    // App Settings
+                    VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
+                        SectionHeader(title: "App Settings")
                         
-                        ProfileMenuRow(
-                            icon: "lock.fill",
-                            title: "Privacy",
-                            subtitle: "Manage your data and privacy",
-                            action: {}
-                        )
-                        
-                        ProfileMenuRow(
-                            icon: "questionmark.circle.fill",
-                            title: "Help & Support",
-                            subtitle: "FAQs, contact support",
-                            action: {}
-                        )
+                        VStack(spacing: 0) {
+                            ProfileMenuRow(
+                                icon: "gear",
+                                title: "Preferences",
+                                subtitle: "Customize your app experience",
+                                action: {}
+                            )
+                            
+                            ProfileMenuRow(
+                                icon: "questionmark.circle.fill",
+                                title: "Help & Support",
+                                subtitle: "Get assistance and FAQs",
+                                action: {}
+                            )
+                            
+                            ProfileMenuRow(
+                                icon: "arrow.clockwise",
+                                title: "Reset App",
+                                subtitle: "Clear all data and start fresh",
+                                action: { showingResetAlert = true }
+                            )
+                        }
+                        .background(Color.white)
+                        .cornerRadius(Constants.CornerRadius.medium)
                     }
-                    .background(Color.white)
-                    .cornerRadius(Constants.CornerRadius.medium)
                 }
-                
-                // Sign Out Button
-                Button(action: { showingSignOutAlert = true }) {
-                    HStack {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                        Text("Sign Out")
-                    }
-                    .foregroundColor(.red)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.white)
-                    .cornerRadius(Constants.CornerRadius.medium)
-                }
+                .padding(.horizontal)
             }
+            .navigationTitle("Profile")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .alert("Sign Out", isPresented: $showingSignOutAlert) {
+        .withGradientBackground(.profile)
+        .alert("Reset App", isPresented: $showingResetAlert) {
             Button("Cancel", role: .cancel) { }
-            Button("Sign Out", role: .destructive) {
-                do {
-                    try Auth.auth().signOut()
-                    appState.isAuthenticated = false
-                } catch {
-                    print("Error signing out: \(error)")
-                }
+            Button("Reset", role: .destructive) {
+                userDataService.refreshProfile()
             }
         } message: {
-            Text("Are you sure you want to sign out?")
+            Text("Are you sure you want to reset the app? This will clear all your data and cannot be undone.")
         }
     }
 }
 
 #Preview {
     ProfileView()
-        .environmentObject(AppState())
 }
