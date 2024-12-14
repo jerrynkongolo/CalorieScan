@@ -75,12 +75,21 @@ struct ProgressView: View {
                 
                 // Food Target
                 ProgressSection(title: "Food Target", iconName: "fork.knife.circle.fill") {
-                    VStack(spacing: Constants.Spacing.medium) {
-                        energyRow(title: "Protein", value: "128g", icon: "circle.grid.cross.fill")
-                        energyRow(title: "Carbs", value: "191g", icon: "circle.grid.2x2.fill")
-                        energyRow(title: "Fat", value: "47g", icon: "circle.grid.3x3.fill")
-                        energyRow(title: "Daily Target", value: "1,700 kcal", icon: "star.fill")
+                    VStack(spacing: 0) {
+                        macroRow(title: "Protein", value: "128g", subtitle: "30% of daily calories", icon: "circle.grid.cross.fill")
+                        Divider()
+                            .padding(.vertical, 8)
+                        macroRow(title: "Carbs", value: "191g", subtitle: "45% of daily calories", icon: "circle.grid.2x2.fill")
+                        Divider()
+                            .padding(.vertical, 8)
+                        macroRow(title: "Fat", value: "47g", subtitle: "25% of daily calories", icon: "circle.grid.3x3.fill")
+                        Divider()
+                            .padding(.vertical, 8)
+                        macroRow(title: "Daily Target", value: "1,700 kcal", subtitle: "Total daily calories", icon: "star.fill")
                     }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(Constants.CornerRadius.medium)
                 }
             }
         }
@@ -128,21 +137,23 @@ struct ProgressView: View {
     
     private func macroRow(title: String, value: String, subtitle: String, icon: String) -> some View {
         HStack {
-            HStack(spacing: Constants.Spacing.small) {
-                Image(systemName: icon)
-                    .foregroundColor(title == "Protein" ? .red : title == "Carbs" ? .green : .yellow)
-                VStack(alignment: .leading, spacing: Constants.Spacing.small) {
-                    Text(title)
-                        .font(.headline)
-                    Text(subtitle)
-                        .font(.subheadline)
-                        .foregroundColor(Constants.Colors.textSecondary)
-                }
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(.secondary)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.body)
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
+            
             Spacer()
+            
             Text(value)
                 .font(.headline)
-                .foregroundColor(Constants.Colors.primary)
+                .fontWeight(.medium)
         }
     }
 }
