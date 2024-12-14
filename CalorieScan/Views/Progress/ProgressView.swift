@@ -59,16 +59,19 @@ struct ProgressView: View {
                 
                 // Daily Energy Plan
                 ProgressSection(title: "Daily Energy Plan", iconName: "bolt.circle.fill") {
-                    VStack(alignment: .leading, spacing: Constants.Spacing.small) {
-                        energyRow(title: "Base Metabolic Rate", value: "1,800 kcal", icon: "flame.fill")
-                        energyRow(title: "Activity Calories", value: "+400 kcal", icon: "figure.walk")
-                        energyRow(title: "Goal Adjustment", value: "-500 kcal", icon: "arrow.up.arrow.down")
-                        
+                    VStack(spacing: 0) {
+                        energyRow(title: "Base Metabolic Rate", value: "1,800 kcal", subtitle: "Your resting energy", icon: "flame.fill")
                         Divider()
-                            .padding(.vertical, Constants.Spacing.small)
-                        
-                        energyRow(title: "Daily Target", value: "1,700 kcal", icon: "star.fill")
+                            .padding(.vertical, 8)
+                        energyRow(title: "Activity Calories", value: "+400 kcal", subtitle: "From daily movement", icon: "figure.walk")
+                        Divider()
+                            .padding(.vertical, 8)
+                        energyRow(title: "Goal Adjustment", value: "-500 kcal", subtitle: "For weight loss", icon: "arrow.up.arrow.down")
+                        Divider()
+                            .padding(.vertical, 8)
+                        energyRow(title: "Daily Target", value: "1,700 kcal", subtitle: "Net daily calories", icon: "star.fill")
                     }
+                    .padding()
                     .background(Color(.systemBackground))
                     .cornerRadius(Constants.CornerRadius.medium)
                 }
@@ -115,24 +118,26 @@ struct ProgressView: View {
         .cornerRadius(Constants.CornerRadius.medium)
     }
     
-    private func energyRow(title: String, value: String, icon: String) -> some View {
+    private func energyRow(title: String, value: String, subtitle: String, icon: String) -> some View {
         HStack {
             Image(systemName: icon)
-                .frame(width: 24)
+                .font(.title2)
                 .foregroundColor(.secondary)
             
-            Text(title)
-                .font(.body)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.body)
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
             
             Spacer()
             
             Text(value)
-                .font(.body)
-                .fontWeight(.regular)
+                .font(.headline)
+                .fontWeight(.bold)
         }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(Constants.CornerRadius.medium)
     }
     
     private func macroRow(title: String, value: String, subtitle: String, icon: String) -> some View {
