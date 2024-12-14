@@ -1,79 +1,63 @@
 import SwiftUI
 
 struct HomeTabView: View {
-    @StateObject private var userDataService = UserDataService.shared
-    @StateObject private var viewModel = HomeViewModel()
-    @State private var showHistory = false
+    @StateObject private var homeViewModel = HomeViewModel()
+    @State private var selectedTab = 0
+    @State private var showProfile = false
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: Constants.Spacing.large) {
-                    if let profile = userDataService.currentProfile {
-                        Text("Hi, \(profile.name)")
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    
-                    // Today's Progress
-                    VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
-                        SectionHeader(title: "Today's Progress")
-                        TodayProgressCard(
-                            remainingCalories: viewModel.remainingCalories,
-                            consumedCalories: viewModel.consumedCalories,
-                            progress: viewModel.calculateProgress()
-                        )
-                    }
-                    
-                    // Insights
-                    VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
-                        SectionHeader(title: "Insights")
-                        InsightCard(
-                            message: "Based on your meals today, you're doing great with protein intake! Consider adding more vegetables to your next meal for balanced nutrition.",
-                            iconName: "brain.head.profile",
-                            accentColor: Constants.Colors.Pastel.purple
-                        )
-                    }
-                    
-                    // Meals Today
-                    VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
-                        HStack {
-                            SectionHeader(title: "Meals Today")
-                            Spacer()
-                            Button("See All") {
-                                showHistory = true
-                            }
-                            .foregroundColor(Constants.Colors.primary)
-                        }
-                        
-                        VStack(spacing: Constants.Spacing.small) {
-                            MealListItem(meal: Meal(name: "Breakfast", timestamp: Date(timeIntervalSince1970: 1608098400), calories: 320, icon: "sunrise.fill"))
-                            MealListItem(meal: Meal(name: "Lunch", timestamp: Date(timeIntervalSince1970: 1608116400), calories: 520, icon: "sun.max.fill"))
-                            MealListItem(meal: Meal(name: "Snack", timestamp: Date(timeIntervalSince1970: 1608127200), calories: 150, icon: "carrot.fill"))
-                            MealListItem(meal: Meal(name: "Dinner", timestamp: Date(timeIntervalSince1970: 1608141600), calories: 450, icon: "moon.stars.fill"))
-                        }
-                    }
-                    
-                    // Recent Foods
-                    VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
-                        SectionHeader(title: "Recent Foods")
-                        
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: Constants.Spacing.medium) {
-                                ForEach(Food.sampleFoods) { food in
-                                    FoodCard(food: food)
-                                }
-                            }
-                        }
-                    }
+        TabView(selection: $selectedTab) {
+            HomeView()
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
                 }
-                .padding(.horizontal, Constants.Spacing.medium)
-            }
-            .background(Constants.Colors.secondaryBackground)
+                .tag(0)
+            
+            HistoryView()
+                .tabItem {
+                    Label("History", systemImage: "clock.fill")
+                }
+                .tag(1)
+            
+            InsightsView()
+                .tabItem {
+                    Label("Insights", systemImage: "chart.bar.fill")
+                }
+                .tag(2)
         }
-        .withGradientBackground(.home)
+        .sheet(isPresented: $showProfile) {
+            ProfileView()
+        }
+        .overlay(alignment: .topTrailing) {
+            Button {
+                showProfile = true
+            } label: {
+                if let profile = homeViewModel.userProfile {
+                    ProfileButton(name: profile.name)
+                } else {
+                    ProfileButton(name: "Guest")
+                }
+            }
+            .padding()
+        }
+    }
+}
+
+struct ProfileButton: View {
+    let name: String
+    
+    var body: some View {
+        HStack {
+            Text(name.prefix(1).uppercased())
+                .font(.headline)
+                .foregroundColor(.white)
+                .frame(width: 36, height: 36)
+                .background(Circle().fill(Color.accentColor))
+                .overlay(
+                    Circle()
+                        .stroke(Color.white, lineWidth: 2)
+                )
+        }
     }
 }
 

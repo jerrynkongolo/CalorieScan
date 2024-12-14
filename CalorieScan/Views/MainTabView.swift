@@ -5,7 +5,7 @@ struct MainTabView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeTabView()
+            HomeView()
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text("Home")
@@ -19,19 +19,26 @@ struct MainTabView: View {
                 }
                 .tag(1)
             
+            HistoryView()
+                .tabItem {
+                    Image(systemName: "clock.fill")
+                    Text("History")
+                }
+                .tag(2)
+            
             RewardsView()
                 .tabItem {
                     Image(systemName: "gift.fill")
                     Text("Rewards")
                 }
-                .tag(2)
-            
-            ProfileView()
-                .tabItem {
-                    Image(systemName: "person.fill")
-                    Text("Profile")
-                }
                 .tag(3)
+            
+            InsightsView()
+                .tabItem {
+                    Image(systemName: "chart.bar.fill")
+                    Text("Insights")
+                }
+                .tag(4)
         }
         .tint(Constants.Colors.iconSelected)
     }

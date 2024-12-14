@@ -1,46 +1,14 @@
 import SwiftUI
 
 struct RewardsView: View {
-    private let rewards = RewardModel.sampleRewards
-    
-    private var totalPoints: Int {
-        rewards.filter { $0.isCompleted }.reduce(0) { $0 + $1.points }
-    }
-    
-    private var completedRewards: Int {
-        rewards.filter { $0.isCompleted }.count
-    }
-    
     var body: some View {
         ScrollableView(title: "Rewards") {
             VStack(spacing: Constants.Spacing.large) {
-                // Summary Card
+                // Points Summary Card
                 VStack(spacing: Constants.Spacing.medium) {
-                    // Points
-                    VStack(alignment: .leading, spacing: Constants.Spacing.small) {
-                        Text("Total Points")
-                            .font(.subheadline)
-                            .foregroundColor(Constants.Colors.textSecondary)
-                        
-                        Text("\(totalPoints)")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(Constants.Colors.primary)
-                    }
-                    
+                    pointsSummaryItem(title: "Total Points", value: "100", textColor: .purple)
                     Divider()
-                    
-                    // Progress
-                    VStack(alignment: .leading, spacing: Constants.Spacing.small) {
-                        Text("Completed")
-                            .font(.subheadline)
-                            .foregroundColor(Constants.Colors.textSecondary)
-                        
-                        Text("\(completedRewards)/\(rewards.count)")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Constants.Colors.textPrimary)
-                    }
+                    pointsSummaryItem(title: "Completed", value: "1/4")
                 }
                 .padding(Constants.Spacing.medium)
                 .background(Color.white)
@@ -48,52 +16,92 @@ struct RewardsView: View {
                 
                 // Available Rewards
                 VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
-                    SectionHeader(title: "Available Rewards")
+                    Text("Available Rewards")
+                        .font(.title2)
+                        .fontWeight(.bold)
                     
-                    ForEach(rewards) { reward in
-                        // Reward Card
-                        HStack(spacing: Constants.Spacing.medium) {
-                            // Icon
-                            Circle()
-                                .fill(reward.isCompleted ? Constants.Colors.Pastel.green : Constants.Colors.Pastel.blue)
-                                .frame(width: Constants.Size.iconLarge, height: Constants.Size.iconLarge)
-                                .overlay(
-                                    Image(systemName: reward.iconName)
-                                        .font(.title2)
-                                        .foregroundColor(Constants.Colors.textDark)
-                                )
-                            
-                            // Content
-                            VStack(alignment: .leading, spacing: Constants.Spacing.small) {
-                                Text(reward.title)
-                                    .font(.headline)
-                                    .foregroundColor(Constants.Colors.textPrimary)
-                                
-                                Text(reward.description)
-                                    .font(.subheadline)
-                                    .foregroundColor(Constants.Colors.textSecondary)
-                            }
-                            
-                            Spacer()
-                            
-                            // Points
-                            VStack(alignment: .trailing, spacing: 4) {
-                                Text("\(reward.points)")
-                                    .font(.headline)
-                                    .foregroundColor(Constants.Colors.primary)
-                                
-                                Text("pts")
-                                    .font(.caption)
-                                    .foregroundColor(Constants.Colors.textSecondary)
-                            }
-                        }
-                        .padding(Constants.Spacing.medium)
-                        .background(Color.white)
-                        .cornerRadius(Constants.CornerRadius.medium)
+                    // Rewards List
+                    VStack(spacing: Constants.Spacing.medium) {
+                        rewardCard(
+                            title: "First Week Streak",
+                            description: "Log your meals for 7 consecutive days",
+                            points: 100,
+                            iconName: "star.fill",
+                            iconColor: .green
+                        )
+                        
+                        rewardCard(
+                            title: "Healthy Balance",
+                            description: "Maintain balanced macros for 5 days",
+                            points: 150,
+                            iconName: "triangle.fill",
+                            iconColor: .blue
+                        )
+                        
+                        rewardCard(
+                            title: "Step Master",
+                            description: "Reach 10,000 steps for 3 days",
+                            points: 200,
+                            iconName: "figure.walk",
+                            iconColor: .blue
+                        )
+                        
+                        rewardCard(
+                            title: "Calorie Goal",
+                            description: "Stay within calorie goal for 5 days",
+                            points: 300,
+                            iconName: "flame.fill",
+                            iconColor: .orange
+                        )
                     }
                 }
             }
         }
+    }
+    
+    private func pointsSummaryItem(title: String, value: String, textColor: Color = .primary) -> some View {
+        VStack(spacing: Constants.Spacing.small) {
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            Text(value)
+                .font(.system(size: 36, weight: .bold))
+                .foregroundColor(textColor)
+        }
+    }
+    
+    private func rewardCard(title: String, description: String, points: Int, iconName: String, iconColor: Color) -> some View {
+        HStack {
+            Circle()
+                .fill(iconColor.opacity(0.2))
+                .frame(width: 48, height: 48)
+                .overlay(
+                    Image(systemName: iconName)
+                        .foregroundColor(iconColor)
+                )
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                Text(description)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing) {
+                Text("\(points)")
+                    .font(.headline)
+                    .foregroundColor(.purple)
+                Text("pts")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(Constants.Spacing.medium)
+        .background(Color.white)
+        .cornerRadius(Constants.CornerRadius.medium)
     }
 }
 

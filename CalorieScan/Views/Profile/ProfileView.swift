@@ -1,99 +1,111 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @StateObject private var userDataService = UserDataService.shared
-    @State private var showingResetAlert = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: Constants.Spacing.large) {
-                    // Header
-                    if let profile = userDataService.currentProfile {
-                        ProfileHeader(
-                            name: profile.name,
-                            imageURL: nil
-                        )
-                    } else {
-                        ProfileHeader(
-                            name: "Guest User",
-                            imageURL: nil
-                        )
+        NavigationView {
+            ZStack {
+                Color(uiColor: .systemBackground)
+                    .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(spacing: 20) {
+                        ProfileInfoSection()
+                        GoalsSection()
+                        HealthMetricsSection()
                     }
-                    
-                    // Account Settings
-                    VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
-                        SectionHeader(title: "Account Settings")
-                        
-                        VStack(spacing: 0) {
-                            ProfileMenuRow(
-                                icon: "person.fill",
-                                title: "Personal Information",
-                                subtitle: "Update your profile details",
-                                action: {}
-                            )
-                            
-                            ProfileMenuRow(
-                                icon: "target",
-                                title: "Goals & Targets",
-                                subtitle: "Set your health and fitness goals",
-                                action: {}
-                            )
-                            
-                            ProfileMenuRow(
-                                icon: "bell.fill",
-                                title: "Notifications",
-                                subtitle: "Manage your notifications",
-                                action: {}
-                            )
-                        }
-                        .background(Color.white)
-                        .cornerRadius(Constants.CornerRadius.medium)
-                    }
-                    
-                    // App Settings
-                    VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
-                        SectionHeader(title: "App Settings")
-                        
-                        VStack(spacing: 0) {
-                            ProfileMenuRow(
-                                icon: "gear",
-                                title: "Preferences",
-                                subtitle: "Customize your app experience",
-                                action: {}
-                            )
-                            
-                            ProfileMenuRow(
-                                icon: "questionmark.circle.fill",
-                                title: "Help & Support",
-                                subtitle: "Get assistance and FAQs",
-                                action: {}
-                            )
-                            
-                            ProfileMenuRow(
-                                icon: "arrow.clockwise",
-                                title: "Reset App",
-                                subtitle: "Clear all data and start fresh",
-                                action: { showingResetAlert = true }
-                            )
-                        }
-                        .background(Color.white)
-                        .cornerRadius(Constants.CornerRadius.medium)
-                    }
+                    .padding()
                 }
-                .padding(.horizontal)
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
-        }
-        .withGradientBackground(.profile)
-        .alert("Reset App", isPresented: $showingResetAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Reset", role: .destructive) {
-                userDataService.refreshProfile()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        // Sign out action
+                        dismiss()
+                    } label: {
+                        Text("Sign Out")
+                            .foregroundColor(.red)
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Close")
+                    }
+                }
             }
-        } message: {
-            Text("Are you sure you want to reset the app? This will clear all your data and cannot be undone.")
+        }
+    }
+}
+
+struct ProfileInfoSection: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Personal Information")
+                .font(.headline)
+            
+            GlassContainer {
+                VStack(alignment: .leading, spacing: 8) {
+                    InfoRow(title: "Name", value: "John Doe")
+                    InfoRow(title: "Age", value: "28 years")
+                    InfoRow(title: "Height", value: "175.0 cm")
+                    InfoRow(title: "Weight", value: "75.0 kg")
+                }
+            }
+        }
+    }
+}
+
+struct GoalsSection: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Goals")
+                .font(.headline)
+            
+            GlassContainer {
+                VStack(alignment: .leading, spacing: 8) {
+                    InfoRow(title: "Weight Goal", value: "Weight Loss")
+                    InfoRow(title: "Target Weight", value: "70.0 kg")
+                    InfoRow(title: "Target Date", value: "Feb 14, 2024")
+                    InfoRow(title: "Daily Calorie Target", value: "2100 kcal")
+                }
+            }
+        }
+    }
+}
+
+struct HealthMetricsSection: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Health Metrics")
+                .font(.headline)
+            
+            GlassContainer {
+                VStack(alignment: .leading, spacing: 8) {
+                    InfoRow(title: "BMI", value: "24.5")
+                    InfoRow(title: "Workout Frequency", value: "Moderate")
+                }
+            }
+        }
+    }
+}
+
+struct InfoRow: View {
+    let title: String
+    let value: String
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .foregroundColor(.secondary)
+            Spacer()
+            Text(value)
+                .fontWeight(.medium)
         }
     }
 }
