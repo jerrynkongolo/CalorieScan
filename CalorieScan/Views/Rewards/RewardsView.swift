@@ -42,7 +42,7 @@ struct RewardsView: View {
                             .foregroundColor(Constants.Colors.textPrimary)
                     }
                 }
-                .padding()
+                .padding(Constants.Spacing.medium)
                 .background(Color.white)
                 .cornerRadius(Constants.CornerRadius.medium)
                 
@@ -87,7 +87,7 @@ struct RewardsView: View {
                                     .foregroundColor(Constants.Colors.textSecondary)
                             }
                         }
-                        .padding()
+                        .padding(Constants.Spacing.medium)
                         .background(Color.white)
                         .cornerRadius(Constants.CornerRadius.medium)
                     }

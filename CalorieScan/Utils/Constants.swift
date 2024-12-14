@@ -51,19 +51,35 @@ enum Constants {
     enum Size {
         static let iconSmall: CGFloat = 24
         static let iconMedium: CGFloat = 40
-        static let iconLarge: CGFloat = 48
-        static let foodCardWidth: CGFloat = 140
-        static let foodCardImageHeight: CGFloat = 100
+        static let iconLarge: CGFloat = 60
+        
+        static let foodCardWidth: CGFloat = 160
+        static let foodCardImageHeight: CGFloat = 120
+        
+        static let rewardCardWidth: CGFloat = 140
+        static let rewardCardHeight: CGFloat = 180
     }
     
-    enum Shadow {
-        static let small = Shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
-        
-        struct Shadow {
-            let color: Color
-            let radius: CGFloat
-            let x: CGFloat
-            let y: CGFloat
+    public enum Shadow {
+        public struct ShadowConfig {
+            public let color: Color
+            public let radius: CGFloat
+            public let x: CGFloat
+            public let y: CGFloat
+            
+            public init(color: Color, radius: CGFloat, x: CGFloat, y: CGFloat) {
+                self.color = color
+                self.radius = radius
+                self.x = x
+                self.y = y
+            }
         }
+        
+        public static let small = ShadowConfig(
+            color: .black.opacity(0.05),
+            radius: 5,
+            x: 0,
+            y: 2
+        )
     }
 }
