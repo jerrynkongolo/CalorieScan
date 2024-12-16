@@ -134,7 +134,7 @@ struct ProgressView: View {
         VStack(spacing: Constants.Spacing.small) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundColor(.accentColor)
+                .foregroundColor(iconColor(for: icon))
             
             Text(title)
                 .font(.caption)
@@ -147,6 +147,25 @@ struct ProgressView: View {
         .frame(maxWidth: .infinity)
         .background(Color(.systemBackground))
         .cornerRadius(Constants.CornerRadius.medium)
+    }
+    
+    private func iconColor(for icon: String) -> Color {
+        switch icon {
+        case "scalemass.fill":
+            return .blue // Current weight
+        case "target":
+            return .green // Target weight
+        case "chart.bar.fill":
+            return .orange // BMI
+        case "ruler.fill":
+            return .purple // Height
+        case "figure.run":
+            return .red // Activity level
+        case "calendar":
+            return .blue // Days left
+        default:
+            return .accentColor
+        }
     }
     
     private func energyRow(title: String, value: String, subtitle: String, icon: String) -> some View {
