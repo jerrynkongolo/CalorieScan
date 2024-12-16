@@ -1,64 +1,148 @@
-## General Rule\
-You must only work on the part of the project (UI or back-end) specified in the instructions.  \
-Do not modify, remove, or overwrite any code that is outside the defined scope.\
-\
----\
-\
-## UI Development Rules\
-- Only modify files or components in the `Views`, `Layouts`, or `Components` directories.  \
-- Do not touch files related to business logic, APIs, models, or data handling.  \
-- Avoid making changes to files in directories like `Models`, `Services`, `Controllers`, or `API`.  \
-\
-- Do not modify:\
-  - Functions, services, or back-end-specific logic.\
-  - Any `@State`, `@ObservedObject`, or `@EnvironmentObject` properties unless explicitly told to.\
-\
-- For all UI-related tasks, follow the rules in `.gpt-instructions` for layout, style, and design.  \
-\
----\
-\
-## Back-End Development Rules\
-- Only modify files or components in the `Models`, `Services`, `Controllers`, or `API` directories.  \
-- Do not touch files related to UI, views, layouts, or styling.  \
-\
-- Avoid making changes to:\
-  - Any files in `Views`, `Layouts`, or `Components`.  \
-  - Design elements like colors, spacing, or layout constraints.  \
-  - Any `@State`, `@ObservedObject`, or `@EnvironmentObject` properties.  \
-\
-- For all back-end-related tasks, refer to `architecture.md` or other back-end documentation for guidance.\
-\
----\
-\
-## Task-Specific Instructions\
-- **Before Starting a Task**: Confirm if the task involves working on UI, back-end, or both. If it\'92s unclear, do not proceed until clarification is provided.  \
-- **During the Task**: Only implement the functionality or design described in the instructions.  \
-- **After Completing the Task**: Ensure that no unrelated files or components were modified.  \
-\
----\
-\
-## Additional Notes\
-- Do not assume changes are needed outside the specified scope unless explicitly told to.  \
-- For UI work, focus on the visual and layout elements only.  \
-- For back-end work, focus only on logic, models, APIs, and data handling.  \
-\
+<?xml version="1.0" encoding="UTF-8"?>
+<project-instructions>
 
-	•	Scope Confirmation:
-Before making any changes, restate the instructions in your own words to ensure you fully understand the required scope. If any ambiguity remains, request clarification.
-	•	No Silent Alterations:
-If you encounter a piece of code that seems incorrect or inefficient but is outside of the specified scope, do not modify it. Instead, note it down and wait for explicit instructions to address it.
-	•	Preserve Naming and Structure:
-Do not rename files, classes, methods, or variables not explicitly mentioned in the instructions. Maintain the existing project structure and organization.
-	•	No Configuration Changes:
-Do not alter configuration files, build settings, deployment scripts, or environment variables unless explicitly instructed. All work should be contained within the directories and files specified.
-	•	Follow Coding Standards:
-If there is a style guide or coding standard referenced (e.g., .gpt-instructions for UI style or architecture.md for back-end structure), adhere strictly to it. Do not introduce new patterns or styles not mentioned in the instructions.
-	•	Testing and Verification:
-After completing the requested changes, verify that your modifications do not break existing functionality outside the allowed scope. Perform a light check (e.g., compile and run the code if applicable) to ensure no unintended side effects have occurred.
-	•	Documentation Clarity:
-If you add or modify code that could be confusing, add comments or documentation only within the allowed scope. Do not alter documentation for code outside of the specified directories.
-	•	No Unauthorized Integrations:
-Do not introduce new libraries, frameworks, or external dependencies unless explicitly instructed to do so.
+  <!-- 
+    These instructions guide the development of a SwiftUI-based application.
+    They establish rules for project structure, code organization, coding style, 
+    adherence to tasks, and emphasis on reusability and maintainability.
+  -->
 
-By following these original and additional rules, the AI coder can maintain strict adherence to the defined boundaries of each task and avoid undesired modifications.
-Refer to this file at the start of each task and follow it precisely.}
+  <overview>
+    <description>
+      This is a SwiftUI-based iOS application that uses AI-driven instructions. 
+      The project maintains a structured approach to file organization, coding conventions, 
+      and data handling. The goal is to preserve clarity, scalability, consistency, and 
+      ensure long-term maintainability.
+    </description>
+  </overview>
+
+  <tech-stack>
+    <frontend>SwiftUI</frontend>
+    <state-management>ObservableObject, State, StateObject, EnvironmentObject</state-management>
+    <data-layer>Combine or async/await for data fetching</data-layer>
+    <storage>UserDefaults, Keychain (for sensitive info), or CoreData (if persistent storage is required)</storage>
+    <networking>URLSession or a custom networking layer (if needed)</networking>
+    <testing>Xcode unit tests and UI tests</testing>
+  </tech-stack>
+
+  <project-structure>
+    <general-structure>
+      <app>
+        <file>App.swift (main entry point)</file>
+        <file>AppDelegate.swift (if needed)</file>
+        <file>SceneDelegate.swift (if needed)</file>
+      </app>
+      <views>
+        <directory>Views</directory>
+        <subdirectory>Screens (full-screen views representing major sections)</subdirectory>
+        <subdirectory>Components (reusable view components, such as custom buttons or cards)</subdirectory>
+        <subdirectory>Modals (views presented modally)</subdirectory>
+      </views>
+      <viewmodels>
+        <directory>ViewModels</directory>
+        <description>Holds ObservableObject-based ViewModels that handle logic and state for corresponding views.</description>
+      </viewmodels>
+      <models>
+        <directory>Models</directory>
+        <description>Data structures (e.g., structs, enums) representing domain objects and entities.</description>
+      </models>
+      <services>
+        <directory>Services</directory>
+        <description>Networking, data fetching, storage, and utility services that facilitate data flow and operations.</description>
+      </services>
+      <utilities>
+        <directory>Utilities</directory>
+        <description>Helper functions, extensions, and general utilities that support the overall codebase.</description>
+      </utilities>
+      <resources>
+        <directory>Resources</directory>
+        <description>Static assets such as images, JSON files, and configuration files.</description>
+      </resources>
+      <tests>
+        <directory>Tests</directory>
+        <subdirectory>UnitTests (for testing logic in isolation)</subdirectory>
+        <subdirectory>UITests (for testing UI behavior and navigation)</subdirectory>
+      </tests>
+    </general-structure>
+  </project-structure>
+
+  <rules>
+
+    <general-rules>
+      <rule>
+        Use PascalCase for type names (e.g., HomeView, UserViewModel) and camelCase for properties and methods.
+      </rule>
+      <rule>
+        Keep code organized by feature and functionality, ensuring a clear separation of concerns.
+      </rule>
+      <rule>
+        Maintain strict adherence to instructions. If instructed to implement only front-end components, do NOT implement backend logic.
+      </rule>
+      <rule>
+        Do not add unrequested features or code. For example, if asked to create a single button layout, create only that button layout without extra elements.
+      </rule>
+      <rule>
+        Proceed to another project layer (e.g., backend) only when explicitly instructed.
+      </rule>
+      <rule>
+        Always follow the latest updated instructions; do not revert to previous ones without explicit approval.
+      </rule>
+      <rule>
+        Prioritize code cleanliness, reusability, and maintainability. Use refactoring to avoid code duplication and create reusable components and utilities.
+      </rule>
+    </general-rules>
+
+    <environment-and-configuration-rules>
+      <rule>
+        Use Swift property wrappers (e.g., @Environment, @AppStorage) for environment and configuration values where appropriate.
+      </rule>
+      <rule>
+        Store sensitive data securely (e.g., Keychain for tokens).
+      </rule>
+      <rule>
+        For multiple build configurations (Debug, Release), manage environment-specific values via configuration files or #if DEBUG flags.
+      </rule>
+      <rule>
+        Update documentation whenever environment handling or configuration rules change.
+      </rule>
+    </environment-and-configuration-rules>
+
+    <type-rules>
+      <rule>
+        Define models in the Models directory. Use structs for data and classes for entities that require identity or lifecycle.
+      </rule>
+      <rule>
+        Prefer Codable structs for data parsing.
+      </rule>
+      <rule>
+        Keep type definitions in logically relevant files. For instance, the User model belongs in UserModel.swift.
+      </rule>
+    </type-rules>
+
+    <swiftui-and-frontend-rules>
+      <rule>
+        Use SwiftUI’s built-in components and maintain a declarative, reactive UI. Views should focus on layout and presentation.
+      </rule>
+      <rule>
+        Manage state using @State, @StateObject, @ObservedObject, and @EnvironmentObject as appropriate.
+      </rule>
+      <rule>
+        Push business logic into ViewModels, keeping Views as simple and stateless as possible.
+      </rule>
+      <rule>
+        Use async/await or Combine for data fetching. Implement error handling and provide clear feedback to the user.
+      </rule>
+      <rule>
+        Name view files with a View suffix (e.g., HomeView.swift) and view model files with a ViewModel suffix (e.g., HomeViewModel.swift).
+      </rule>
+      <rule>
+        Create reusable UI components in the Components directory. Factor out repeated code into components or utilities to simplify maintenance.
+      </rule>
+      <rule>
+        Views should not fetch data directly. Fetch data in ViewModels or Services and pass it down as needed.
+      </rule>
+    </swiftui-and-frontend-rules>
+
+  </rules>
+
+</project-instructions>

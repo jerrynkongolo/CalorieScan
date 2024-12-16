@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ProgressView: View {
+    @State private var isHealthKitConnected = false
+    
     var body: some View {
         ScrollableView(title: "Progress") {
             VStack(spacing: Constants.Spacing.large) {
@@ -26,9 +28,38 @@ struct ProgressView: View {
                 }
                 
                 // Health Kit Section
-                ProgressSection(title: "Health Data", iconName: "heart.fill") {
+                VStack(alignment: .leading, spacing: Constants.Spacing.medium) {
+                    HStack {
+                        HStack(spacing: Constants.Spacing.small) {
+                            Image(systemName: "heart.fill")
+                                .font(.title3)
+                                .foregroundColor(Constants.Colors.primary)
+                            
+                            Text("Health Data")
+                                .font(.headline)
+                                .foregroundColor(Constants.Colors.textPrimary)
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            isHealthKitConnected.toggle()
+                        }) {
+                            Text(isHealthKitConnected ? "Connected" : "Connect")
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(isHealthKitConnected ? Color.orange : Color.gray)
+                                .cornerRadius(20)
+                        }
+                    }
+                    
                     HealthKitSection()
                 }
+                .padding(.vertical, Constants.Spacing.medium)
+                .padding(.horizontal, Constants.Spacing.medium)
+                .background(Color.white)
+                .cornerRadius(Constants.CornerRadius.medium)
                 
                 // Weight Goal Progress
                 ProgressSection(title: "Weight Goal Progress", iconName: "chart.line.uptrend.xyaxis") {
