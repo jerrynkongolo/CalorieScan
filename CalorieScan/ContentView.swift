@@ -40,9 +40,6 @@ struct ContentView: View {
                 userIsAuthenticated = false
                 signInAnonymously()
             }
-            if userIsAuthenticated && user != nil {
-                userDataService.refreshUserData()
-            }
         }
     }    
 
