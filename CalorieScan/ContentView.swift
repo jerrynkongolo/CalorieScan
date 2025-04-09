@@ -13,7 +13,6 @@ struct ContentView: View {
                 if showLaunchScreen {
                     LaunchScreenView(onAnimationComplete: {
                         withAnimation { showLaunchScreen = false }
-                        checkAuthentication()                        
                     })
                 } else if !userIsAuthenticated {
                     Text("Authenticating...")
@@ -29,27 +28,17 @@ struct ContentView: View {
         }
         .onAppear {
             if Auth.auth().currentUser == nil { // Check if a user is already signed in
-                signInAnonymously() // If not, attempt anonymous sign-in
-            } else {
-                checkAuthentication() // Otherwise, proceed with the regular check
+                
+            }
+            Auth.auth().addStateDidChangeListener { auth, user in
+                if let user = user {
+                    userIsAuthenticated = true
+                } else {
+                    userIsAuthenticated = false
+                    signInAnonymously()
+                }
             }
         }
-    }
-
-    private func checkAuthentication() {        
-        if Auth.auth().currentUser != nil {
-            userIsAuthenticated = true
-        } else {
-            userIsAuthenticated = false
-            signInAnonymously()
-        }
-
-        Auth.auth().addStateDidChangeListener { auth, user in
-            if let user = user {
-                userIsAuthenticated = true
-            } else {userIsAuthenticated = false
-                signInAnonymously()}
-    }    
     }
 
     private func signInAnonymously() {
