@@ -11,10 +11,9 @@ struct ContentView: View {
         NavigationView {
             ZStack {
                 if showLaunchScreen {
-                    LaunchScreenView(onAnimationComplete: { 
+                    LaunchScreenView(onAnimationComplete: {
                         withAnimation { showLaunchScreen = false }
-                        
-                        checkAuthentication()
+                        checkAuthentication()                        
                     })
                 } else if !userIsAuthenticated {
                     Text("Authenticating...")
@@ -41,10 +40,11 @@ struct ContentView: View {
                 userIsAuthenticated = false
                 signInAnonymously()
             }
-        if userIsAuthenticated && user != nil {
-            userDataService.refreshUserData()
+            if userIsAuthenticated && user != nil {
+                userDataService.refreshUserData()
+            }
         }
-    }
+    }    
 
     private func signInAnonymously() {
         Auth.auth().signInAnonymously { result, error in
