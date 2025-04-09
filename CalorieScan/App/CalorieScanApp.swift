@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 import os.log
 
 @main
@@ -8,6 +9,8 @@ struct CalorieScanApp: App {
 
     init() {
         FirebaseApp.configure()
+        // Configure Firebase Auth
+        Auth.auth().settings?.isAppVerificationDisabledForTesting = true
         logger.info("Firebase configured for data storage")
     }
 

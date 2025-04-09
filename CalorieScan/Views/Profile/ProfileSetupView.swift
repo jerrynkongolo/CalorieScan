@@ -27,11 +27,6 @@ struct ProfileSetupView: View {
             .navigationTitle("Set Up Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") { saveProfile() }
                 }
