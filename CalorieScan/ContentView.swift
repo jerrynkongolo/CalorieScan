@@ -28,7 +28,11 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            checkAuthentication()
+            if Auth.auth().currentUser == nil { // Check if a user is already signed in
+                signInAnonymously() // If not, attempt anonymous sign-in
+            } else {
+                checkAuthentication() // Otherwise, proceed with the regular check
+            }
         }
     }
 
