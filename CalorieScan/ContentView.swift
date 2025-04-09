@@ -37,14 +37,17 @@ struct ContentView: View {
     }
 
     private func checkAuthentication() {
+        if Auth.auth().currentUser != nil {
+            userIsAuthenticated = true
+        } else {
+            userIsAuthenticated = false
+            signInAnonymously()
+        }
         Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
                 userIsAuthenticated = true
-            } else {
-                userIsAuthenticated = false
-                signInAnonymously()
-            }
-        }
+            } else {userIsAuthenticated = false
+                signInAnonymously()}
     }    
 
     private func signInAnonymously() {
