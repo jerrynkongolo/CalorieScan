@@ -11,7 +11,9 @@ struct ContentView: View {
         NavigationView {
             ZStack {
                 if showLaunchScreen {
-                    LaunchScreenView(onAnimationComplete: { withAnimation { showLaunchScreen = false }
+                    LaunchScreenView(onAnimationComplete: { 
+                        withAnimation { showLaunchScreen = false }
+                        
                         checkAuthentication()
                     })
                 } else if !userIsAuthenticated {
