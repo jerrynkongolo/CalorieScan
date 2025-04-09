@@ -18,11 +18,7 @@ struct ContentView: View {
                         }
                 } else {
                     if showLaunchScreen {
-                        LaunchScreenView {
-                            withAnimation {
-                                showLaunchScreen = false
-                            }
-                        }
+                        LaunchScreenView(onAnimationComplete: { withAnimation { showLaunchScreen = false } })
                     } else if !userIsAuthenticated {
                         Text("Authenticating...")
                     } else if !appState.hasCompletedProfile {
